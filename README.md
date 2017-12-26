@@ -18,23 +18,22 @@ React.createElement(
     Foo,
     {name: Bob},
     React.createElement(
-        div,
+        "div",
         null,
         Hello
     ),
     React.createElement(
-        div,
+        "div",
         null,
         React.createElement(
-            World,
-            null,
+            World
         )
     )
 )
 ```
 
 ## Roadmap
-- [ ] Lowercased tagnames
 - [ ] Quotes on attributes
 - [ ] Code expressions within the JSX
+- [x] Lowercased tagnames
 - [x] Self closing tags
