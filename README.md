@@ -8,7 +8,7 @@ The aim is to somehow be programming language agnostic and enable using JSX in a
 <Foo name="Bob">
     <div>Hello</div>
     <div>
-        <World></World>
+        <World />
     </div>
 </Foo>
 ```
@@ -34,7 +34,7 @@ React.createElement(
 ```
 
 ## Roadmap
-- [ ] Self closing tags
 - [ ] Lowercased tagnames
 - [ ] Quotes on attributes
 - [ ] Code expressions within the JSX
+- [x] Self closing tags

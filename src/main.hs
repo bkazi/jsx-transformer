@@ -24,7 +24,18 @@ node = try (jsx)
     <|> textString
 
 jsx :: Parser String
-jsx = do
+jsx = try (multiTag) <|> selfClosing
+
+selfClosing :: Parser String
+selfClosing = do
+    tok "<"
+    tagName <- some alphaNumChar <* whitespace
+    attrs <- attr <* whitespace
+    tok "/>"
+    return $ concat [pragma, "(", tagName, ",", stringifyAttributes attrs, ")"]
+
+multiTag :: Parser String
+multiTag = do
     tok "<"
     tagName <- some alphaNumChar <* whitespace
     attrs <- attr <* whitespace
