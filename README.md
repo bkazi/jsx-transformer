@@ -16,7 +16,7 @@ transforms to
 ```js
 React.createElement(
     Foo,
-    {name: Bob},
+    {name:"Bob"},
     React.createElement(
         "div",
         null,
@@ -33,7 +33,7 @@ React.createElement(
 ```
 
 ## Roadmap
-- [ ] Quotes on attributes
 - [ ] Code expressions within the JSX
+- [x] Quotes on attributes
 - [x] Lowercased tagnames
 - [x] Self closing tags

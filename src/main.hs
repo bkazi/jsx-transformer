@@ -27,9 +27,11 @@ flattenChildren :: [String] -> String
 flattenChildren childArr = intercalate "," childArr
 
 main = do
-    fileName <- fmap head getArgs
-    fileContents <- readFile fileName
-    parseTest node fileContents
+    filePath <- fmap head getArgs
+    file <- readFile filePath
+    putStrLn $ case runParser node filePath file of
+        Left err -> parseErrorPretty err
+        Right x -> x
 
 cr :: Parser [Char]
 cr = many (oneOf "\r\n")
@@ -73,7 +75,14 @@ attrName :: Parser AttrName
 attrName = manyTill letterChar (tok "=")
 
 attrValue :: Parser AttrValue
-attrValue = tok "\"" *> manyTill (alphaNumChar <|> oneOf "-") (tok "\"")
+attrValue = try ((tok "{" *> manyTill anyChar (tok "}")))
+        <|> stringAttrP
+
+stringAttrP :: Parser AttrValue
+stringAttrP = do
+    tok "\""
+    val <- manyTill (alphaNumChar <|> oneOf "-") (tok "\"")
+    return $ "\"" ++ val ++ "\""
 
 attr :: Parser Attributes
 attr = attr' `sepEndBy` whitespace
@@ -82,10 +91,3 @@ attr = attr' `sepEndBy` whitespace
 
 textString :: Parser String
 textString = whitespace *> many (alphaNumChar <|> oneOf " \t\r\n") <* whitespace
-
-parseFile :: FilePath -> IO ()
-parseFile filePath = do
-  file <- readFile filePath
-  putStrLn $ case runParser node filePath file of
-      Left err -> parseErrorPretty err
-      Right x -> x
