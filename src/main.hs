@@ -30,7 +30,7 @@ main = do
     filePath <- fmap head getArgs
     file <- readFile filePath
     putStrLn $ case runParser node filePath file of
-        Left err -> parseErrorPretty err
+        Left err -> parseErrorPretty err 
         Right x -> x
 
 cr :: Parser [Char]
@@ -43,8 +43,12 @@ whitespace :: Parser ()
 whitespace = many (oneOf " \t\n") *> pure ()
 
 node :: Parser String
-node = try (jsx)
-    <|> textString
+node = do
+        e <- eitherP jsx anyChar
+        let x = either (\s -> s) (\c -> [c]) e
+        rest <- node
+        return $ x ++ rest
+    <|> eof *> pure ""
 
 jsx :: Parser String
 jsx = try (multiTag) <|> selfClosing
@@ -63,8 +67,14 @@ multiTag = do
     tagName <- some alphaNumChar <* whitespace
     attrs <- attr <* whitespace
     tok ">"
-    childArr <- manyTill (node) (tok ("</" ++ tagName ++ ">"))
+    childArr <- manyTill ((try jsx) <|> textString) (tok ("</" ++ tagName ++ ">"))
     return $ printPragma tagName attrs childArr
+
+codeP :: Parser String
+codeP = do
+    tok "{"
+    code <- manyTill anyChar (tok "}")
+    return $ code
 
 type AttrName = String
 type AttrValue = String
@@ -75,8 +85,7 @@ attrName :: Parser AttrName
 attrName = manyTill letterChar (tok "=")
 
 attrValue :: Parser AttrValue
-attrValue = try ((tok "{" *> manyTill anyChar (tok "}")))
-        <|> stringAttrP
+attrValue = stringAttrP
 
 stringAttrP :: Parser AttrValue
 stringAttrP = do
