@@ -89,7 +89,11 @@ class MyComponent extends Component {
 _Note: the indentation was manually added, formatting needs work_
 
 ## Roadmap
-- [ ] Code expressions within the JSX
+- [ ] Better examples for JavaScript
+- [ ] Examples in Kotlin
+- [ ] Better support of the spec (wherever possible)
+- [ ] [ReasonML](https://reasonml.github.io) port (?? needs discussion)
+- [x] Code expressions within the JSX
 - [x] JSX in code
 - [x] Quotes on attributes
 - [x] Lowercased tagnames
