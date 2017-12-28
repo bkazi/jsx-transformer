@@ -44,14 +44,19 @@ whitespace = many (oneOf " \t\n") *> pure ()
 
 node :: Parser String
 node = do
-        e <- eitherP jsx anyChar
-        let x = either (\s -> s) (\c -> [c]) e
+        c <- oneCharP
         rest <- node
-        return $ x ++ rest
+        return $ c ++ rest
     <|> eof *> pure ""
 
 jsx :: Parser String
 jsx = try (multiTag) <|> selfClosing
+
+oneCharP :: Parser String
+oneCharP = do
+    e <- eitherP jsx anyChar
+    let x = either (\s -> s) (\c -> [c]) e
+    return $ x
 
 selfClosing :: Parser String
 selfClosing = do
@@ -67,14 +72,30 @@ multiTag = do
     tagName <- some alphaNumChar <* whitespace
     attrs <- attr <* whitespace
     tok ">"
-    childArr <- manyTill ((try jsx) <|> textString) (tok ("</" ++ tagName ++ ">"))
+    childArr <- manyTill (jsx <|> codeP <|> textString) (tok ("</" ++ tagName ++ ">"))
     return $ printPragma tagName attrs childArr
 
 codeP :: Parser String
 codeP = do
     tok "{"
-    code <- manyTill anyChar (tok "}")
+    code <- pure (intercalate "") <*> (manyTill (inner 0 "") (tok "}"))
     return $ code
+
+inner :: Int -> String -> Parser String
+inner 0 "" = do
+    c <- oneCharP
+    if (head c == '{')
+        then inner 1 c
+        else inner 0 c
+inner count str = if (count == 0)
+    then return $ str
+    else do
+        c <- oneCharP
+        if (head c == '{')
+            then inner (count+1) (str ++ c)
+            else if (head c == '}')
+                then inner (count-1) (str ++ c)
+                else inner count (str ++ c)
 
 type AttrName = String
 type AttrValue = String
@@ -85,7 +106,7 @@ attrName :: Parser AttrName
 attrName = manyTill letterChar (tok "=")
 
 attrValue :: Parser AttrValue
-attrValue = stringAttrP
+attrValue = stringAttrP <|> codeP
 
 stringAttrP :: Parser AttrValue
 stringAttrP = do

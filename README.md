@@ -19,10 +19,16 @@ class MyComponent extends Component {
 
     render() {
         return (
-            <Foo name="Bob">
+            <Foo bar={
+                () => {
+                    console.log('oh no');
+                    return <OhNo />;
+                }
+            }>
                 <div>Hello</div>
+                <div>{this.state.name}</div>
                 <div>
-                    <World />
+                    <World big="true" blue={true}/>
                 </div>
             </Foo>
         );
@@ -47,7 +53,12 @@ class MyComponent extends Component {
         return (
             React.createElement(
                 Foo,
-                {name:"Bob"},
+                {
+                    bar: () => {
+                        console.log('oh no');
+                        return React.createElement(OhNo);
+                    }
+                },
                 React.createElement(
                     "div",
                     null,
@@ -56,8 +67,17 @@ class MyComponent extends Component {
                 React.createElement(
                     "div",
                     null,
+                    this.state.name
+                ),
+                React.createElement(
+                    "div",
+                    null,
                     React.createElement(
-                        World
+                        World,
+                        {
+                            big: "true",
+                            blue: true
+                        }
                     )
                 )
             )
