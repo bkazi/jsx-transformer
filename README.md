@@ -46,7 +46,7 @@ class MyComponent extends Component {
 
     componentDidMount() {
         console.log("Component Did Mount!!");
-        console.log(`test: ${React.createElement(World)}`);
+        console.log(`test: ${React.createElement(World, null)}`);
     }
 
     render() {
@@ -56,7 +56,7 @@ class MyComponent extends Component {
                 {
                     bar: () => {
                         console.log('oh no');
-                        return React.createElement(OhNo);
+                        return React.createElement(OhNo, null);
                     }
                 },
                 React.createElement(

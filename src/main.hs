@@ -7,7 +7,6 @@ import Data.Char
 pragma = "React.createElement"
 
 printPragma :: String -> Attributes -> [String] -> String
-printPragma tagName [] [] = concat [pragma, "(", tagName, ")"]
 printPragma tagName attrs [] = concat [pragma, "(", correctTagName tagName, ",", stringifyAttributes attrs, ")"]
 printPragma tagName attrs childArr = concat [pragma, "(", correctTagName tagName, ",", stringifyAttributes attrs, ",", flattenChildren childArr, ")"]
 
