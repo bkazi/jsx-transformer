@@ -62,7 +62,7 @@ class MyComponent extends Component {
                 React.createElement(
                     "div",
                     null,
-                    Hello
+                    "Hello"
                 ),
                 React.createElement(
                     "div",

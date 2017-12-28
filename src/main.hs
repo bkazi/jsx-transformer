@@ -119,4 +119,4 @@ attr = attr' `sepEndBy` whitespace
     attr' = (,) <$> attrName <*> attrValue <* whitespace
 
 textString :: Parser String
-textString = whitespace *> many (alphaNumChar <|> oneOf " \t\r\n") <* whitespace
+textString = pure (\t -> "\"" ++ t ++ "\"") <*> (whitespace *> many (alphaNumChar <|> oneOf " \t\r\n") <* whitespace)
